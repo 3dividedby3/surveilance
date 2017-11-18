@@ -18,6 +18,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.java>1.8</version.java>
+        <version.maven.compiler.plugin>3.2</version.maven.compiler.plugin>
+        <version.appassembler.maven.plugin>2.0.0</version.appassembler.maven.plugin>
         <version.junit>3.8.1</version.junit>
         <version.jetty>9.4.6.v20170531</version.jetty>
     </properties>
@@ -34,35 +37,57 @@
                 <artifactId>business</artifactId>
                 <version>${project.version}</version>
             </dependency>
-			<dependency>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-servlet</artifactId>
-				<version>${version.jetty}</version>
-			</dependency>
-			
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-servlet</artifactId>
+                <version>${version.jetty}</version>
+            </dependency>
+
             <!-- test dependencies -->
             <dependency>
-	            <groupId>junit</groupId>
-	            <artifactId>junit</artifactId>
-	            <version>${version.junit}</version>
-	            <scope>test</scope>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${version.junit}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
-    
+
     <build>
         <pluginManagement>
-	        <plugins>
-	            <plugin>
-	                <version>3.2</version>
-	                <groupId>org.apache.maven.plugins</groupId>
-	                <artifactId>maven-compiler-plugin</artifactId>
-	                <configuration>
-	                    <source>1.8</source>
-	                    <target>1.8</target>
-	                </configuration>
-	            </plugin>
-	        </plugins>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${version.maven.compiler.plugin}</version>
+                    <configuration>
+                        <source>${version.java}</source>
+                        <target>${version.java}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>appassembler-maven-plugin</artifactId>
+                    <version>${version.appassembler.maven.plugin}</version>
+                    <configuration>
+                        <assembleDirectory>target</assembleDirectory>
+                        <programs>
+                            <program>
+                                <mainClass>surveilance.fish.ws.App</mainClass>
+                                <name>fisheye</name>
+                            </program>
+                        </programs>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>assemble</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
         </pluginManagement>
     </build>
 </project>
