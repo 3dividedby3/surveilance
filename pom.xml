@@ -18,18 +18,51 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.junit>3.8.1</version.junit>
+        <version.jetty>9.4.6.v20170531</version.jetty>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            
+            <dependency>
+                <groupId>whisper.fish</groupId>
+                <artifactId>model</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>whisper.fish</groupId>
+                <artifactId>business</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-servlet</artifactId>
+				<version>${version.jetty}</version>
+			</dependency>
+			
             <!-- test dependencies -->
             <dependency>
 	            <groupId>junit</groupId>
 	            <artifactId>junit</artifactId>
-	            <version>3.8.1</version>
+	            <version>${version.junit}</version>
 	            <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
+    
+    <build>
+        <pluginManagement>
+	        <plugins>
+	            <plugin>
+	                <version>3.2</version>
+	                <groupId>org.apache.maven.plugins</groupId>
+	                <artifactId>maven-compiler-plugin</artifactId>
+	                <configuration>
+	                    <source>1.8</source>
+	                    <target>1.8</target>
+	                </configuration>
+	            </plugin>
+	        </plugins>
+        </pluginManagement>
+    </build>
 </project>
