@@ -1,20 +1,13 @@
 package surveilance.fish.ws;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 
 import surveilance.fish.business.UIServlet;
 
 public class App {
-    public static final int APP_PORT = 6900;
+    //you must use the port you are given by Heroku in the PORT environment variable
+    public static final int APP_PORT = Integer.valueOf(System.getenv("PORT"));
 
     public static void main(String[] args) throws Exception {
         Server server = new Server(APP_PORT);
