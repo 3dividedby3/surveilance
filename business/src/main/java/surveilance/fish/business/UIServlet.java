@@ -1,20 +1,102 @@
 package surveilance.fish.business;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class UIServlet extends HttpServlet {
 
+    public static final int MAX_NO_IMG_SAVED = 3;
+    public static final String BASE64_IMG_HTML = "<br><img src=\"data:image/png;base64, %s\"/>";
+
     private static final long serialVersionUID = -6565586545385873380L;
 
+    private final RsaDecrypter rsaDecrypter;
+    private final Map<Long, String> dataToDisplay;
+    
+    public UIServlet() {
+        rsaDecrypter = new RsaDecrypter();
+        dataToDisplay = new LinkedHashMap<Long, String>(){
+            private static final long serialVersionUID = 165645754658L;
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<Long, String> eldest) {
+                boolean result = MAX_NO_IMG_SAVED < size();
+                if (result) {
+                    System.out.println("Removing old data from data to display, timestamp [" + eldest.getKey() + "], value: [" + eldest.getValue() + "]");
+                }
+                return result;
+            }
+        };
+    }
+    
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response ) throws ServletException,  IOException  {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response ) throws IOException  {
+        logRequestData(request);
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().println("<h1>The UI is working!<br> Now the rest...</h1>");
+        response.getWriter().println("<br>Data: " + getDataToDisplay());
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        logRequestData(request);
+        String body = null;
+        try {
+            body = request.getReader().lines().collect(Collectors.joining());
+        } catch(IOException e) {
+            System.out.println("Error while reading body of put request: " + e.getMessage());
+        }
+        System.out.println("Received data: " + body);
+        if (body == null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        String data = new String(rsaDecrypter.decrypt(body.getBytes()));
+        if (data != null) {
+            System.out.println("Addind data to be displayed: " +data);
+            addDataToDisplay(data);
+        }
+    }
+
+    /**
+     * the data must be received from the producer already encoded to base64
+     * @param data
+     */
+    private void addDataToDisplay(String data) {
+        synchronized(dataToDisplay) {
+            dataToDisplay.put(System.currentTimeMillis(), data);
+        }
+    }
+
+    private String getDataToDisplay() {
+        StringBuilder response = new StringBuilder();
+        synchronized(dataToDisplay) {
+            for (String currentData : dataToDisplay.values()) {
+                response.append(String.format(BASE64_IMG_HTML, currentData));
+            }
+        }
+        
+        return response.toString();
+    }
+    
+
+    private void logRequestData(HttpServletRequest request) {
+        String unixTime = String.valueOf(System.currentTimeMillis());
+        StringBuilder builder = new StringBuilder();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        while(headerNames.hasMoreElements()) {
+            String currentHeader = headerNames.nextElement();
+            builder.append(" | " + currentHeader + "=" + request.getHeader(currentHeader));
+            
+        }
+        System.out.println(unixTime + " - Page accessed by: " + builder);
+        
     }
 }

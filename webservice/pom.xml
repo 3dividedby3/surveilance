@@ -7,9 +7,10 @@
         <artifactId>surveilance</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
+
     <artifactId>webservice</artifactId>
     <packaging>jar</packaging>
-    <name>business</name>
+    <name>webservice</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,6 +42,15 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>appassembler-maven-plugin</artifactId>
+                <configuration>
+	                <assembleDirectory>target</assembleDirectory>
+	                <programs>
+	                    <program>
+	                        <mainClass>surveilance.fish.ws.App</mainClass>
+	                        <name>fisheye</name>
+	                    </program>
+	                </programs>
+	            </configuration>
             </plugin>
         </plugins>
     </build>

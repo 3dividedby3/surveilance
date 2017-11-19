@@ -21,7 +21,7 @@
         <version.java>1.8</version.java>
         <version.maven.compiler.plugin>3.2</version.maven.compiler.plugin>
         <version.appassembler.maven.plugin>2.0.0</version.appassembler.maven.plugin>
-        <version.junit>3.8.1</version.junit>
+        <version.junit>4.4</version.junit>
         <version.jetty>9.4.6.v20170531</version.jetty>
     </properties>
 
@@ -69,15 +69,6 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>appassembler-maven-plugin</artifactId>
                     <version>${version.appassembler.maven.plugin}</version>
-                    <configuration>
-                        <assembleDirectory>target</assembleDirectory>
-                        <programs>
-                            <program>
-                                <mainClass>surveilance.fish.ws.App</mainClass>
-                                <name>fisheye</name>
-                            </program>
-                        </programs>
-                    </configuration>
                     <executions>
                         <execution>
                             <phase>package</phase>
