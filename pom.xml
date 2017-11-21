@@ -21,6 +21,7 @@
         <version.java>1.8</version.java>
         <version.maven.compiler.plugin>3.2</version.maven.compiler.plugin>
         <version.appassembler.maven.plugin>2.0.0</version.appassembler.maven.plugin>
+        <version.fasterxml.jackson>2.9.0</version.fasterxml.jackson>
         <version.junit>4.4</version.junit>
         <version.jetty>9.4.6.v20170531</version.jetty>
     </properties>
@@ -36,6 +37,11 @@
                 <groupId>whisper.fish</groupId>
                 <artifactId>business</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${version.fasterxml.jackson}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>

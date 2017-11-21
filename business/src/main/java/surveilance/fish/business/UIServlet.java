@@ -10,6 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import surveilance.fish.model.DataBrick;
+
 public class UIServlet extends HttpServlet {
 
     public static final int MAX_NO_IMG_SAVED = 3;
@@ -17,11 +21,15 @@ public class UIServlet extends HttpServlet {
 
     private static final long serialVersionUID = -6565586545385873380L;
 
+    private final AesDecrypter aesDecrypter;
     private final RsaDecrypter rsaDecrypter;
+    private final ObjectMapper objectMapper;
     private final Map<Long, String> dataToDisplay;
     
     public UIServlet() {
+        aesDecrypter = new AesDecrypter();
         rsaDecrypter = new RsaDecrypter();
+        objectMapper = new ObjectMapper();
         dataToDisplay = new LinkedHashMap<Long, String>(){
             private static final long serialVersionUID = 165645754658L;
             @Override
@@ -40,7 +48,7 @@ public class UIServlet extends HttpServlet {
         logRequestData(request);
         response.setContentType("text/html");
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println("<h1>The UI is working!<br> Now the rest...</h1>");
+        response.getWriter().println("<h1>Check the images below</h1>");
         response.getWriter().println("<br>Data: " + getDataToDisplay());
     }
 
@@ -58,7 +66,9 @@ public class UIServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-        String data = new String(rsaDecrypter.decrypt(body.getBytes()));
+        DataBrick dataBrick = objectMapper.readValue(body, DataBrick.class);
+        byte[] aesKey = rsaDecrypter.decrypt(dataBrick.getAesKey().getBytes());
+        String data = new String(aesDecrypter.decrypt(dataBrick.getPayload(), aesKey));
         if (data != null) {
             System.out.println("Addind data to be displayed: " +data);
             addDataToDisplay(data);
