@@ -19,6 +19,8 @@ public class UIServlet extends HttpServlet {
     public static final int MAX_NO_IMG_SAVED = 3;
     public static final String BASE64_IMG_HTML = "<br><img src=\"data:image/png;base64, %s\"/>";
 
+    private static final String ENCODED_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCJ7F0c19UaNelx4OkmpR/UebPENeQaYKKcbYmOEEh2xsWkM2CD3qfEUmXy2oNTkrs5dEeSDqQyCk4OAaB/vuTYuIAdkrM7IYLjvmkB4vfwtWxv07A8rIPSO0GXyzFDHgmmKDxYYCAnyY63IF37ReYk9OlG/JwUBDEtlU8yjaOjkQIDAQAB";
+
     private static final long serialVersionUID = -6565586545385873380L;
 
     private final AesDecrypter aesDecrypter;
@@ -28,7 +30,7 @@ public class UIServlet extends HttpServlet {
     
     public UIServlet() {
         aesDecrypter = new AesDecrypter();
-        rsaDecrypter = new RsaDecrypter();
+        rsaDecrypter = new RsaDecrypter(ENCODED_PUBLIC_KEY);
         objectMapper = new ObjectMapper();
         dataToDisplay = new LinkedHashMap<Long, String>(){
             private static final long serialVersionUID = 165645754658L;
@@ -47,9 +49,10 @@ public class UIServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response ) throws IOException  {
         logRequestData(request);
         response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
         response.getWriter().println("<h1>Check the images below</h1>");
         response.getWriter().println("<br>Data: " + getDataToDisplay());
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     @Override

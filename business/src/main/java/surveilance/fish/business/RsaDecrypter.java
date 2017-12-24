@@ -12,17 +12,14 @@ import javax.crypto.Cipher;
 
 public class RsaDecrypter {
     public static final String ALGORITHM_RSA = "RSA";
-    
-    private static final String ENCODED_PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDsjHdO49slqJoXQI6CLPHX6rtuZrmF4ddFSu4F42IEZs1152QOxXdyNvdh/4jRO1CS9DJsjvF9qG9uXvCCco5LHFIrurrKPKBhI4W8kTGo5dHEHGuR1YJK2O3vrfezcA441tgI+jR93LVasFps+CwNE5nohOQBMr+7f2B6dDzVOwIDAQAB";
-
     private static final Decoder BASE64_DECODER = Base64.getDecoder();
     
     private final Key publicKey;
     private final Cipher decryptCipher;
     
-    public RsaDecrypter() {
+    public RsaDecrypter(String encodedPublicKey) {
         try {
-            publicKey = initKey(ENCODED_PUBLIC_KEY);
+            publicKey = initKey(encodedPublicKey);
             decryptCipher = Cipher.getInstance(ALGORITHM_RSA);
             decryptCipher.init(Cipher.DECRYPT_MODE, publicKey);
         } catch(IOException | GeneralSecurityException e) {
