@@ -21,10 +21,17 @@
             <groupId>whisper.fish</groupId>
             <artifactId>model</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>whisper.fish</groupId>
+            <artifactId>security</artifactId>
+        </dependency>
+        
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+        
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
