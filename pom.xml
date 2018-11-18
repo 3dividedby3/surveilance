@@ -97,4 +97,11 @@
             </plugins>
         </pluginManagement>
     </build>
+    <repositories>
+	    <repository>
+	        <id>whisper.fish</id>
+	        <name>security</name>
+	        <url>file:${project.basedir}/repo</url>
+	    </repository>
+	</repositories>
 </project>
