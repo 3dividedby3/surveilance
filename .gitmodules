@@ -1,3 +1,3 @@
 [submodule "lib/security"]
 	path = lib/security
-	url = https://github.com/3dividedby3/surveilance_producer
+	url = https://github.com/3dividedby3/surveilance_producer/tree/master/security
