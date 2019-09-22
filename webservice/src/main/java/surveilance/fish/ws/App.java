@@ -9,6 +9,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 import surveilance.fish.business.DataDumperServlet;
 import surveilance.fish.business.UIServlet;
+import surveilance.fish.business.security.AuthManageServlet;
 import surveilance.fish.security.AesDecrypter;
 import surveilance.fish.security.AesEncrypter;
 import surveilance.fish.security.AesUtil;
@@ -48,8 +49,11 @@ public class App {
                 }
         ));
         
+        ServletHolder authManageServlet = new ServletHolder(new AuthManageServlet(new AesDecrypter(), new RsaDecrypter(ENCODED_PUBLIC_KEY)));
+        
         handler.addServletWithMapping(holderDataDumperServlet, "/dump");
         handler.addServletWithMapping(holderUIServlet, "/image");
+        handler.addServletWithMapping(authManageServlet, "/auth");
         
         server.start();
         server.join();

@@ -1,6 +1,11 @@
 package surveilance.fish.model;
 
-public class DataBrick {
+/**
+ * T is just a marker to make it clear what the final type of 
+ * the String payload is, to be used with objectMapper.readValue
+ * @param <T>
+ */
+public class DataBrick<T> {
 
     /** AES key used to encrypt the payload. The key is encrypted with a RSA key and Base64 encoded. */
     private String aesKey;

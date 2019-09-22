@@ -38,6 +38,7 @@ public final class ViewerData {
      */
     @Override
     public int hashCode() {
+        //TODO: replace with java.util.Objects.hash(body, headers, timestamp);
         final int prime = 31;
         int result = 1;
         result = prime * result + ((body == null) ? 0 : body.hashCode());
