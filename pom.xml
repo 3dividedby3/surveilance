@@ -24,7 +24,7 @@
         <version.fasterxml.jackson>2.9.4</version.fasterxml.jackson>
         <version.junit>4.4</version.junit>
         <version.jetty>9.4.6.v20170531</version.jetty>
-        <version.whisper.fish.support>1.0-SNAPSHOT</version.whisper.fish.support>
+        <version.whisper.fish.support>2.0-SNAPSHOT</version.whisper.fish.support>
     </properties>
 
     <dependencyManagement>
