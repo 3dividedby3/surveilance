@@ -37,13 +37,18 @@ public class DataDumperServlet extends HttpServlet {
     }
     
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response ) throws IOException  {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response ) {
         Tracker.getInstance().trackUserData(request);
         authValidator.doAuth(request);
         //TODO: maybe add Apache httpcore dependency and use org.apache.http.entity.ContentType.APPLICATION_JSON.toString()
         response.setContentType("application/json; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println(objectWriter.writeValueAsString(createDataBrick(Tracker.getInstance().dumpData())));
+        try {
+            response.getWriter().println(objectWriter.writeValueAsString(createDataBrick(Tracker.getInstance().dumpData())));
+        } catch (IOException e) {
+            System.out.println("Cannot send data  brick");
+            e.printStackTrace();
+        }
     }
 
     private DataBrick<List<ViewerData>> createDataBrick(List<ViewerData> data) throws IOException  {
