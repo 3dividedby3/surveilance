@@ -3,17 +3,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>whisper.fish</groupId>
-    <artifactId>surveilance</artifactId>
+    <artifactId>support</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>surveilance</name>
+    <name>support</name>
     <url>http://maven.apache.org</url>
 
     <modules>
-        <module>model</module>
-        <module>business</module>
-        <module>webservice</module>
+        <module>generator</module>
+		<module>security</module>
+		<module>persistance</module>
+        <module>publisher</module>
     </modules>
 
     <properties>
@@ -21,10 +22,10 @@
         <version.java>1.8</version.java>
         <version.maven.compiler.plugin>3.2</version.maven.compiler.plugin>
         <version.appassembler.maven.plugin>2.0.0</version.appassembler.maven.plugin>
+        <version.apache.http.client>4.5.3</version.apache.http.client>
+        <version.whisper.fish>1.0-SNAPSHOT</version.whisper.fish>
         <version.fasterxml.jackson>2.9.4</version.fasterxml.jackson>
         <version.junit>4.4</version.junit>
-        <version.jetty>9.4.6.v20170531</version.jetty>
-        <version.whisper.fish.support>1.0-SNAPSHOT</version.whisper.fish.support>
     </properties>
 
     <dependencyManagement>
@@ -32,33 +33,32 @@
             <dependency>
                 <groupId>whisper.fish</groupId>
                 <artifactId>model</artifactId>
-                <version>${project.version}</version>
+                <version>${version.whisper.fish}</version>
             </dependency>
-            
-            <dependency>
-                <groupId>whisper.fish</groupId>
-                <artifactId>business</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            
+        
             <dependency>
                 <groupId>whisper.fish</groupId>
                 <artifactId>security</artifactId>
-                <version>${version.whisper.fish.support}</version>
+                <version>${project.version}</version>
             </dependency>
             
             <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${version.fasterxml.jackson}</version>
+                <groupId>whisper.fish</groupId>
+                <artifactId>persistance</artifactId>
+                <version>${project.version}</version>
             </dependency>
-            
+        
             <dependency>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-servlet</artifactId>
-                <version>${version.jetty}</version>
+			    <groupId>com.fasterxml.jackson.core</groupId>
+			    <artifactId>jackson-databind</artifactId>
+			    <version>${version.fasterxml.jackson}</version>
+			</dependency>
+        
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${version.apache.http.client}</version>
             </dependency>
-
             <!-- test dependencies -->
             <dependency>
                 <groupId>junit</groupId>
@@ -85,6 +85,15 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>appassembler-maven-plugin</artifactId>
                     <version>${version.appassembler.maven.plugin}</version>
+                    <configuration>
+                        <assembleDirectory>target</assembleDirectory>
+                        <programs>
+                            <program>
+                                <mainClass>surveilance.fish.publisher.App</mainClass>
+                                <name>publisher</name>
+                            </program>
+                        </programs>
+                    </configuration>
                     <executions>
                         <execution>
                             <phase>package</phase>
@@ -97,11 +106,4 @@
             </plugins>
         </pluginManagement>
     </build>
-    <repositories>
-	    <repository>
-	        <id>whisper.fish</id>
-	        <name>security</name>
-	        <url>file:repo</url>
-	    </repository>
-	</repositories>
 </project>
