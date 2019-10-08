@@ -7,7 +7,7 @@ import surveilance.fish.security.AesEncrypter;
 import surveilance.fish.security.AesUtil;
 import surveilance.fish.security.RsaEncrypter;
 
-public abstract class BaseEncServlet extends BaseSurvServlet {
+public abstract class BaseEncServlet extends BaseSecServlet {
 
     private static final long serialVersionUID = -4267910856903669854L;
     

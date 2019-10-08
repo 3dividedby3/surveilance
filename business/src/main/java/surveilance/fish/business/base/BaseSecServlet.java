@@ -10,7 +10,7 @@ import surveilance.fish.business.security.AuthValidator;
 import surveilance.fish.business.track.Tracker;
 import surveilance.fish.security.AesUtil;
 
-abstract class BaseSurvServlet extends HttpServlet {
+abstract class BaseSecServlet extends HttpServlet {
 
     private static final long serialVersionUID = 6663579614446235836L;
 
@@ -18,7 +18,7 @@ abstract class BaseSurvServlet extends HttpServlet {
     private final ObjectMapper objectMapper;
     private final AuthValidator authValidator;
 
-    BaseSurvServlet(AesUtil aesUtil) {
+    BaseSecServlet(AesUtil aesUtil) {
         this.aesUtil = aesUtil;
         
         objectMapper = new ObjectMapper();
@@ -29,10 +29,14 @@ abstract class BaseSurvServlet extends HttpServlet {
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        Tracker.getInstance().trackUserData(request);
+        track(request);
         getAuthValidator().doAuth(request);
         
         doGetSecured(request, response);
+    }
+
+    protected void track(HttpServletRequest request) {
+        Tracker.getInstance().trackUserData(request);
     }
     
     /**

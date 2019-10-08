@@ -40,6 +40,11 @@ public class BeCommandServlet extends BaseEncServlet {
             doSaveBeCommand(commandBase64Url);
         }
     }
+    
+    @Override
+    protected void track(HttpServletRequest request) {
+        //skip tracking this, creates too much data
+    }
 
     private void doSendBeCommand(HttpServletResponse response) {
         if (beCommand == null) {
