@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import surveilance.fish.business.security.AuthCookieHolder;
 import surveilance.fish.business.security.AuthValidator;
 import surveilance.fish.business.track.Tracker;
 import surveilance.fish.model.DataBrick;
@@ -18,6 +19,8 @@ import surveilance.fish.security.AesDecrypter;
 import surveilance.fish.security.RsaDecrypter;
 
 public class UIServlet extends HttpServlet {
+    
+    public static final String INDEX_HTML = "<html><script>function goLeft() {execCommand(\"Z289bGVmdA==\");}function goForward() {execCommand(\"Z289Zm9yd2FyZA==\");}function goRight() {execCommand(\"Z289cmlnaHQ=\");}function execCommand(command) {disableAllButtons();httpGet(command);setTimeout(function reload(){window.location.reload(true)}, 25000);}function httpGet(command) {var url = \"/command?authCookie=%s&command=\" + command;console.log(url);var xmlHttp = new XMLHttpRequest();xmlHttp.open(\"GET\", url, false);try {xmlHttp.send();} catch(err) {console.log(err.message);}}function disableAllButtons() {document.getElementById(\"btnLeft\").disabled = true;document.getElementById(\"btnForward\").disabled = true;document.getElementById(\"btnRight\").disabled = true;}function enableAllButtons() {document.getElementById(\"btnLeft\").disabled = false;document.getElementById(\"btnForward\").disabled = false;document.getElementById(\"btnRight\").disabled = false;}function reloadPage() {window.location.reload(true);}</script><head/><body onload=\"enableAllButtons()\"><h1>Check the images below</h1><button id=\"btnLeft\" type=\"button\" style=\"padding: 25px\" onclick=\"goLeft()\">&lt;</button> <button id=\"btnForward\" type=\"button\" style=\"padding: 25px\" onclick=\"goForward()\">^</button> <button id=\"btnRight\" type=\"button\" style=\"padding: 25px\" onclick=\"goRight()\">&gt;</button><br>Data:%s</body></html>";
     public static final String BASE64_IMG_HTML = "<br><br><img src=\"data:image/png;base64, %s\"/>";
 
     private static final long serialVersionUID = -6565586545385873380L;
@@ -42,13 +45,15 @@ public class UIServlet extends HttpServlet {
         authValidator.doAuth(request);
         response.setContentType("text/html; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().println("<h1>Check the images below</h1>");
-        response.getWriter().println("<br>Data: " + getDataToDisplay());
+        
+        String dataToDisplay = getDataToDisplay();
+        response.getWriter().println(String.format(INDEX_HTML, AuthCookieHolder.getInstance().getAuthCookie(), dataToDisplay));
     }
 
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ViewerData viewerData = Tracker.getInstance().trackUserData(request);
+        authValidator.doAuth(request);
         String body = viewerData.getBody();
         System.out.println("Received data: " + body);
         if (body == null) {
@@ -59,7 +64,7 @@ public class UIServlet extends HttpServlet {
         byte[] aesKey = rsaDecrypter.decrypt(dataBrick.getAesKey().getBytes());
         String data = new String(aesDecrypter.decrypt(dataBrick.getPayload(), aesKey));
         if (data != null) {
-            System.out.println("Addind data to be displayed: " + data);
+            System.out.println("Adding data to be displayed: " + data);
             addDataToDisplay(data);
         }
     }

@@ -46,6 +46,13 @@ public class AuthValidator {
         }
 
         System.out.println("Invalid [" + NAME_AUTH_COOKIE + "] received: [" + receivedCookieValue + "], but must be: [" + securedAuthCookie + "]");
+        //TODO: if auth is invalid then delay a couple of seconds to slow down brute force
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
         return false;
 
     }

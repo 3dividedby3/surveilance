@@ -15,6 +15,7 @@ import surveilance.fish.model.ViewerData;
 import surveilance.fish.security.AesDecrypter;
 import surveilance.fish.security.RsaDecrypter;
 
+//TODO: create BaseDecServlet
 public class AuthManageServlet extends HttpServlet {
 
     private static final long serialVersionUID = -5850655080399392601L;

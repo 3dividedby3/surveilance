@@ -54,9 +54,8 @@ public class BeCommandServlet extends BaseEncServlet {
         
         response.setContentType("application/json; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        String dataBrickJson;
         try {
-            dataBrickJson = getObjectMapper().writeValueAsString(createDataBrick(beCommand));
+            String dataBrickJson = getObjectMapper().writeValueAsString(createDataBrick(beCommand));
             response.getWriter().println(dataBrickJson);
             beCommand = null;
         } catch (IOException e) {

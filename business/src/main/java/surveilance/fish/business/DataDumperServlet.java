@@ -1,64 +1,36 @@
 package surveilance.fish.business;
 
 import java.io.IOException;
-import java.util.List;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-
-import surveilance.fish.business.security.AuthValidator;
+import surveilance.fish.business.base.BaseEncServlet;
 import surveilance.fish.business.track.Tracker;
-import surveilance.fish.model.DataBrick;
-import surveilance.fish.model.ViewerData;
 import surveilance.fish.security.AesEncrypter;
 import surveilance.fish.security.AesUtil;
 import surveilance.fish.security.RsaEncrypter;
 
-public class DataDumperServlet extends HttpServlet {
+public class DataDumperServlet extends BaseEncServlet {
 
     private static final long serialVersionUID = 2329853925310660049L;
-
-    private final RsaEncrypter rsaEncrypter;
-    private final AesEncrypter aesEncrypter;
-    private final AesUtil aesUtil;
-    private final ObjectWriter objectWriter;
-    private final AuthValidator authValidator;
     
     public DataDumperServlet(AesEncrypter aesEncrypter, RsaEncrypter rsaEncrypter, AesUtil aesUtil) {
-        this.aesEncrypter = aesEncrypter;
-        this.rsaEncrypter = rsaEncrypter;
-        this.aesUtil = aesUtil;
-        objectWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        authValidator = new AuthValidator();
+        super(aesEncrypter, rsaEncrypter, aesUtil);
     }
     
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response ) {
-        Tracker.getInstance().trackUserData(request);
-        authValidator.doAuth(request);
+    protected void doGetSecured(HttpServletRequest request, HttpServletResponse response ) {
         //TODO: maybe add Apache httpcore dependency and use org.apache.http.entity.ContentType.APPLICATION_JSON.toString()
         response.setContentType("application/json; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         try {
-            response.getWriter().println(objectWriter.writeValueAsString(createDataBrick(Tracker.getInstance().dumpData())));
+            response.getWriter().println(getObjectMapper().writeValueAsString(createDataBrick(Tracker.getInstance().dumpData())));
         } catch (IOException e) {
             System.out.println("Cannot send data  brick");
             e.printStackTrace();
         }
     }
 
-    private DataBrick<List<ViewerData>> createDataBrick(List<ViewerData> data) throws IOException  {
-        DataBrick<List<ViewerData>> dataBrick = new DataBrick<>();
-        String dataAsString = objectWriter.writeValueAsString(data);
-        byte[] key = aesUtil.createAesKey();
-        dataBrick.setAesKey(rsaEncrypter.encryptAndEncode(key));
-        dataBrick.setPayload(aesEncrypter.encryptAndEncode(dataAsString, key));
-        
-        return dataBrick;
-    }
     
 }
