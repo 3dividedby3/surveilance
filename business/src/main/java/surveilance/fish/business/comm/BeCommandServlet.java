@@ -8,13 +8,13 @@ import java.util.Base64.Decoder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import surveilance.fish.business.base.BaseEncServlet;
+import surveilance.fish.business.base.BaseEncSecServlet;
 import surveilance.fish.model.BeCommand;
 import surveilance.fish.security.AesEncrypter;
 import surveilance.fish.security.AesUtil;
 import surveilance.fish.security.RsaEncrypter;
 
-public class BeCommandServlet extends BaseEncServlet {
+public class BeCommandServlet extends BaseEncSecServlet {
     
     private static final long serialVersionUID = -7984353514018683593L;
 
@@ -40,11 +40,6 @@ public class BeCommandServlet extends BaseEncServlet {
             doSaveBeCommand(commandBase64Url);
         }
     }
-    
-    @Override
-    protected void track(HttpServletRequest request) {
-        //skip tracking this, creates too much data
-    }
 
     private void doSendBeCommand(HttpServletResponse response) {
         if (beCommand == null) {
@@ -53,14 +48,15 @@ public class BeCommandServlet extends BaseEncServlet {
         }
         
         response.setContentType("application/json; charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
         try {
             String dataBrickJson = getObjectMapper().writeValueAsString(createDataBrick(beCommand));
             response.getWriter().println(dataBrickJson);
+            response.setStatus(HttpServletResponse.SC_OK);
             beCommand = null;
         } catch (IOException e) {
             System.out.println("Cannot send data brick");
             e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -7,7 +7,7 @@ public class AuthValidator {
 
     public static final String NAME_AUTH_COOKIE = "authCookie";
 
-    public void doAuth(HttpServletRequest request) {
+    public void doAuth(HttpServletRequest request) throws SecurityException {
         String securedAuthCookie = AuthCookieHolder.getInstance().getAuthCookie();
         if (securedAuthCookie == null) {
             System.out.println("Secured [" + NAME_AUTH_COOKIE + "] not set, call http put first!");

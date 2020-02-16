@@ -1,13 +1,11 @@
 package surveilance.fish.business.track;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,20 +25,17 @@ public class Tracker {
         return INSTANCE;
     }
 
-    public ViewerData trackUserData(HttpServletRequest request) {
+    public ViewerData trackUserData(HttpServletRequest request, String body) {
         Map<String, List<String>> headers = new HashMap<>();
         Enumeration<String> headerNames = request.getHeaderNames();
         while(headerNames.hasMoreElements()) {
             String currentHeaderName = headerNames.nextElement();
             headers.put(currentHeaderName, Collections.list(request.getHeaders(currentHeaderName)));
         }
-        String body = null;
-        try {
-            body = request.getReader().lines().collect(Collectors.joining());
-        } catch(IOException e) {
-            System.out.println("Error while reading body of put request: " + e.getMessage());
-        }
-        ViewerData viewerData = new ViewerData(headers, body);
+        
+        String fullUrl = request.getRequestURL() + "?" + request.getQueryString();
+        
+        ViewerData viewerData = new ViewerData(headers, fullUrl, body);
         System.out.println(viewerData.getTimestamp() + " - Page accessed by: " + viewerData.getHeaders());
         tracked.add(viewerData);
         
@@ -56,4 +51,5 @@ public class Tracker {
             return toReturn;
         }
     }
+    
 }
