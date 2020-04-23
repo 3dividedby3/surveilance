@@ -21,7 +21,7 @@
         <version.java>1.8</version.java>
         <version.maven.compiler.plugin>3.2</version.maven.compiler.plugin>
         <version.appassembler.maven.plugin>2.0.0</version.appassembler.maven.plugin>
-        <version.fasterxml.jackson>2.9.10.1</version.fasterxml.jackson>
+        <version.fasterxml.jackson>2.9.10.4</version.fasterxml.jackson>
         <version.junit>4.4</version.junit>
         <version.jetty>9.4.6.v20170531</version.jetty>
         <version.whisper.fish.support>3.0-SNAPSHOT</version.whisper.fish.support>
