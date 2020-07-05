@@ -11,6 +11,7 @@ import surveilance.fish.business.DataDumperServlet;
 import surveilance.fish.business.UIServlet;
 import surveilance.fish.business.comm.BeCommandServlet;
 import surveilance.fish.business.security.AuthManageServlet;
+import surveilance.fish.common.FixedSizeArrayDeque;
 import surveilance.fish.security.AesDecrypter;
 import surveilance.fish.security.AesEncrypter;
 import surveilance.fish.security.AesUtil;
@@ -37,18 +38,7 @@ public class App {
         
         ServletHolder holderUIServlet = new ServletHolder(new UIServlet(new AesDecrypter()
                 , new RsaDecrypter(ENCODED_PUBLIC_KEY)
-                , new LinkedHashMap<Long, String>() {
-                    private static final long serialVersionUID = 165645754658L;
-                    @Override
-                    protected boolean removeEldestEntry(Map.Entry<Long, String> eldest) {
-                        boolean result = MAX_NO_IMG_SAVED < size();
-                        if (result) {
-                            System.out.println("Removing old data from data to display, timestamp [" + eldest.getKey() + "], value: [" + eldest.getValue() + "]");
-                        }
-                        return result;
-                    }
-                }
-        ));
+                , new FixedSizeArrayDeque<>(MAX_NO_IMG_SAVED)));
         
         ServletHolder authManageServlet = new ServletHolder(new AuthManageServlet(new AesDecrypter(), new RsaDecrypter(ENCODED_PUBLIC_KEY)));
         

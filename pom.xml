@@ -4,11 +4,10 @@
 
     <groupId>whisper.fish</groupId>
     <artifactId>surveilance</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>surveilance</name>
-    <url>http://maven.apache.org</url>
 
     <modules>
         <module>model</module>
@@ -21,10 +20,10 @@
         <version.java>1.8</version.java>
         <version.maven.compiler.plugin>3.2</version.maven.compiler.plugin>
         <version.appassembler.maven.plugin>2.0.0</version.appassembler.maven.plugin>
-        <version.fasterxml.jackson>2.9.10.1</version.fasterxml.jackson>
+        <version.fasterxml.jackson>2.10.0</version.fasterxml.jackson>
         <version.junit>4.4</version.junit>
         <version.jetty>9.4.6.v20170531</version.jetty>
-        <version.whisper.fish.support>3.0-SNAPSHOT</version.whisper.fish.support>
+        <version.whisper.fish.support>4.0-SNAPSHOT</version.whisper.fish.support>
     </properties>
 
     <dependencyManagement>
@@ -44,6 +43,11 @@
             <dependency>
                 <groupId>whisper.fish</groupId>
                 <artifactId>security</artifactId>
+                <version>${version.whisper.fish.support}</version>
+            </dependency>
+            <dependency>
+                <groupId>whisper.fish</groupId>
+                <artifactId>common</artifactId>
                 <version>${version.whisper.fish.support}</version>
             </dependency>
             
@@ -100,7 +104,7 @@
     <repositories>
 	    <repository>
 	        <id>whisper.fish</id>
-	        <name>security</name>
+	        <name>support</name>
 	        <url>file:repo</url>
 	    </repository>
 	</repositories>
