@@ -93,6 +93,7 @@ public class MediatorServlet extends HttpServlet {
 
     private DestinationGroup getDestinationGroup(int connId, String destinationHost, int destinationPort) throws IOException {
         DestinationGroup destinationGroupResponse;
+        Socket destinationSocket;
         synchronized(DESTINATION_GROUPS) {
             destinationGroupResponse = DESTINATION_GROUPS.get(connId);
             if (destinationGroupResponse != null) {
@@ -102,12 +103,12 @@ public class MediatorServlet extends HttpServlet {
             proxyUtils.logWithThreadName("[" + connId +"] DestinationGroup - create new conn to host: " + destinationHost + ", port: " + destinationPort);
             destinationGroupResponse = new DestinationGroup();
             DESTINATION_GROUPS.put(connId, destinationGroupResponse);
-        }
         
-        Socket destinationSocket = new Socket(destinationHost, destinationPort);
-        destinationSocket.setKeepAlive(true);
-        destinationSocket.setSoTimeout(TO_DESTINATION_TIMEOUT);
-        destinationGroupResponse.setSocket(destinationSocket);
+            destinationSocket = new Socket(destinationHost, destinationPort);
+            destinationSocket.setKeepAlive(true);
+            destinationSocket.setSoTimeout(TO_DESTINATION_TIMEOUT);
+            destinationGroupResponse.setSocket(destinationSocket);    
+        }
         
         BlockingQueue<byte[]> destinationDataQueue = destinationGroupResponse.getData();
         DestinationGroup destinationGroupAux = destinationGroupResponse;
