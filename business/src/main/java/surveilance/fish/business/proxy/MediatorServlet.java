@@ -6,7 +6,6 @@ import java.net.Socket;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServlet;
@@ -93,7 +92,6 @@ public class MediatorServlet extends HttpServlet {
 
     private DestinationGroup getDestinationGroup(int connId, String destinationHost, int destinationPort) throws IOException {
         DestinationGroup destinationGroupResponse;
-        Socket destinationSocket;
         synchronized(DESTINATION_GROUPS) {
             destinationGroupResponse = DESTINATION_GROUPS.get(connId);
             if (destinationGroupResponse != null) {
@@ -104,33 +102,35 @@ public class MediatorServlet extends HttpServlet {
             destinationGroupResponse = new DestinationGroup();
             DESTINATION_GROUPS.put(connId, destinationGroupResponse);
         
-            destinationSocket = new Socket(destinationHost, destinationPort);
+            Socket destinationSocket = new Socket(destinationHost, destinationPort);
             destinationSocket.setKeepAlive(true);
             destinationSocket.setSoTimeout(TO_DESTINATION_TIMEOUT);
             destinationGroupResponse.setSocket(destinationSocket);    
         }
         
-        BlockingQueue<byte[]> destinationDataQueue = destinationGroupResponse.getData();
-        DestinationGroup destinationGroupAux = destinationGroupResponse;
-        
         Thread readFromDestination = new Thread("read_from_destination_" + connId){
             public void run() {
                 while(true) {
+                    DestinationGroup destinationGroup = DESTINATION_GROUPS.get(connId);
+                    if (destinationGroup == null) {
+                        proxyUtils.logWithThreadName("connection has been closed, so closing thread too");
+                        return;
+                    }
                     try {
                         proxyUtils.logWithThreadName("waiting for data from destination");
-                        ReadInputStreamData readInputStreamData = proxyUtils.readFromStream(destinationSocket.getInputStream());
-                        if (destinationGroupAux.isEndOfStream()) {
+                        ReadInputStreamData readInputStreamData = proxyUtils.readFromStream(destinationGroup.getSocket().getInputStream());
+                        if (destinationGroup.isEndOfStream()) {
                             proxyUtils.logWithThreadName("stopping thread because there is already endOfStream set to true");
                             return;
                         }
                         byte[] currentReadData = readInputStreamData.getData();
                         if (currentReadData.length > 0) {
                             proxyUtils.logWithThreadName("adding data from destination to the queue");
-                            destinationDataQueue.add(currentReadData);
+                            destinationGroup.getData().add(currentReadData);
                         }
                         if (readInputStreamData.isEndOfStream()) {
                             proxyUtils.logWithThreadName("stopping thread because received endOfStream from destination");
-                            destinationGroupAux.setEndOfStream(true);
+                            destinationGroup.setEndOfStream(true);
                             return;
                         }
                     } catch (IOException e) {
