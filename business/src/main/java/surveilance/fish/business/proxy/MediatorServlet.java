@@ -1,6 +1,7 @@
 package surveilance.fish.business.proxy;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,10 +12,6 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 
 public class MediatorServlet extends HttpServlet {
 
@@ -45,7 +42,9 @@ public class MediatorServlet extends HttpServlet {
                 , Integer.valueOf(request.getHeader(HEADER_DESTINATION_PORT)));
         
         proxyUtils.logWithThreadName("[" + connId +"] POST - writing all from interceptedInputStream to destinationOutputStream");
-        destinationGroup.getSocket().getOutputStream().write(dataFromIntercepted.getData());
+        Socket destinationsocket = destinationGroup.getSocket();
+        OutputStream destinationOutputStream = destinationsocket.getOutputStream();
+        destinationOutputStream.write(dataFromIntercepted.getData());
         
         proxyUtils.logWithThreadName("[" + connId +"] POST - done");
     }
