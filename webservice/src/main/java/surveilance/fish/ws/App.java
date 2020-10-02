@@ -1,8 +1,5 @@
 package surveilance.fish.ws;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -10,6 +7,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import surveilance.fish.business.DataDumperServlet;
 import surveilance.fish.business.UIServlet;
 import surveilance.fish.business.comm.BeCommandServlet;
+import surveilance.fish.business.proxy.MediatorServlet;
 import surveilance.fish.business.security.AuthManageServlet;
 import surveilance.fish.common.FixedSizeArrayDeque;
 import surveilance.fish.security.AesDecrypter;
@@ -46,10 +44,13 @@ public class App {
                 , new RsaEncrypter(ENCODED_PUBLIC_KEY, false)
                 , new AesUtil()));
         
+        ServletHolder holderMediatorServlet = new ServletHolder(new MediatorServlet());
+        
         handler.addServletWithMapping(holderDataDumperServlet, "/dump");
         handler.addServletWithMapping(holderUIServlet, "/image");
         handler.addServletWithMapping(authManageServlet, "/auth");
         handler.addServletWithMapping(holderBeCommandServlet, "/command");
+        handler.addServletWithMapping(holderMediatorServlet, "/proxy");
         
         server.start();
         server.join();
